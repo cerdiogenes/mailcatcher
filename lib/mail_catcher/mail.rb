@@ -73,6 +73,7 @@ module MailCatcher::Mail extend self
     @messages_query.execute.map do |row|
       Hash[row.fields.zip(row)].tap do |message|
         message["recipients"] &&= JSON.parse(message["recipients"])
+        message.each { |k, v| message[k] = v.force_encoding(Encoding::UTF_8) if v.is_a?(String) }
       end
     end
   end
@@ -82,6 +83,7 @@ module MailCatcher::Mail extend self
     row = @message_query.execute(id).next
     row && Hash[row.fields.zip(row)].tap do |message|
       message["recipients"] &&= JSON.parse(message["recipients"])
+      message.each { |k, v| message[k] = v.force_encoding(Encoding::UTF_8) if v.is_a?(String) }
     end
   end
 
